@@ -123,7 +123,7 @@ window.addEventListener('DOMContentLoaded', () => {
     //window.addEventListener('scroll', shovModalByScroll);
 
 
-    ////////////////\\\\ FORMS  //////////////////////////////////////
+    //////////////// FORMS  //////////////////////////////////////
 
     const forms = document.querySelectorAll('form');
 
