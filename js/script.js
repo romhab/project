@@ -343,29 +343,59 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const slides = document.querySelectorAll('.offer__slide'),
         prev = document.querySelector('.offer__slider-prev'),
-        next = document.querySelector('.offer__slider-next');
-    let slideIvdex = 1; 
-    showSlides(slideIvdex);
+        next = document.querySelector('.offer__slider-next'),
+        total = document.querySelector('#total'), //всього
+        current = document.querySelector('#current');//поточний
+    let slideIndex = 1; 
+
+    showSlides(slideIndex);
+
+    if (slides.length < 10) {
+        total.textContent = `0${slides.length}`;
+    } else {
+        total.textContent = slides.length;
+    }
+
+
     
     
     function showSlides(index) {
         //перевірка крайнього положення 
         if (index > slides.length) {//якшо індекс позиції більший ніж  загальна к-сть слайдів 
-            slideIvdex = 1;         //вернутись до першого ілайду  
+            slideIndex = 1;         //вернутись до першого ілайду  
         }
 
         if (index < 1) { //якшо індекс менше за 1 (0)
-            slideIvdex = slides.length; //повернутись до останнього слайду в кінець
+            slideIndex = slides.length; //повернутись до останнього слайду в кінець
             
         }
 
         slides.forEach(itemt => {
             itemt.style.display = 'none';
         });
+        slides[slideIndex - 1].style.display = 'block';
 
-
+        if (slides.length < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
+    
     }
 
+
+    
+    function plusSlider(n) {
+        showSlides(slideIndex += n);
+    } 
+
+    prev.addEventListener('click', () => {
+        plusSlider(-1);
+    });
+
+    next.addEventListener('click', () => {
+        plusSlider(1);
+    });
 
     
 
