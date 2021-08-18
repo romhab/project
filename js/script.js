@@ -344,58 +344,64 @@ window.addEventListener('DOMContentLoaded', () => {
     const slides = document.querySelectorAll('.offer__slide'),
         prev = document.querySelector('.offer__slider-prev'),
         next = document.querySelector('.offer__slider-next'),
-        total = document.querySelector('#total'), //всього
-        current = document.querySelector('#current');//поточний
+        total = document.querySelector('#total'),     //всього
+        current = document.querySelector('#current') ,//поточний
+        slidesWreper = document.querySelector('.offer__slider-wrapper'),//обгортка
+        slidesField = document.querySelector('.offer__slider-inner'),   //поле з слайдами
+        width = window.getComputedStyle(slidesWreper).width;            //доступ до ширини видимого вікна слайдера
+
+
     let slideIndex = 1; 
+    slidesField.style.width = 100 * slides.length + '%'; //помістити усі слайди в поле зi слайдами
 
-    showSlides(slideIndex);
+    // showSlides(slideIndex);
 
-    if (slides.length < 10) {
-        total.textContent = `0${slides.length}`;
-    } else {
-        total.textContent = slides.length;
-    }
+    // if (slides.length < 10) {
+    //     total.textContent = `0${slides.length}`;
+    // } else {
+    //     total.textContent = slides.length;
+    // }
 
 
     
     
-    function showSlides(index) {
-        //перевірка крайнього положення 
-        if (index > slides.length) {//якшо індекс позиції більший ніж  загальна к-сть слайдів 
-            slideIndex = 1;         //вернутись до першого ілайду  
-        }
+    // function showSlides(index) {
+    //     //перевірка крайнього положення 
+    //     if (index > slides.length) {//якшо індекс позиції більший ніж  загальна к-сть слайдів 
+    //         slideIndex = 1;         //вернутись до першого ілайду  
+    //     }
 
-        if (index < 1) { //якшо індекс менше за 1 (0)
-            slideIndex = slides.length; //повернутись до останнього слайду в кінець
+    //     if (index < 1) { //якшо індекс менше за 1 (0)
+    //         slideIndex = slides.length; //повернутись до останнього слайду в кінець
             
-        }
+    //     }
 
-        slides.forEach(itemt => {
-            itemt.style.display = 'none';
-        });
-        slides[slideIndex - 1].style.display = 'block';
+    //     slides.forEach(itemt => {
+    //         itemt.style.display = 'none';
+    //     });
+    //     slides[slideIndex - 1].style.display = 'block';
 
-        if (slides.length < 10) {
-            current.textContent = `0${slideIndex}`;
-        } else {
-            current.textContent = slideIndex;
-        }
+    //     if (slides.length < 10) {
+    //         current.textContent = `0${slideIndex}`;
+    //     } else {
+    //         current.textContent = slideIndex;
+    //     }
     
-    }
+    // }
 
 
     
-    function plusSlider(n) {
-        showSlides(slideIndex += n);
-    } 
+    // function plusSlider(n) {
+    //     showSlides(slideIndex += n);
+    // } 
 
-    prev.addEventListener('click', () => {
-        plusSlider(-1);
-    });
+    // prev.addEventListener('click', () => {
+    //     plusSlider(-1);
+    // });
 
-    next.addEventListener('click', () => {
-        plusSlider(1);
-    });
+    // next.addEventListener('click', () => {
+    //     plusSlider(1);
+    // });
 
     
 
