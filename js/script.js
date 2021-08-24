@@ -161,7 +161,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     //  таймер модального вікна
-    //const modalTimerId = setInterval(openModal, 5000);          //modal timer тимчасово вимкнений
+    //const modalTimerId = setInterval(openModal, 5000);          //modal timer тимчасово ((((OFF)))
     //    назва          запуск     (ф-ції,     через 5 сек.)
 
     //  
@@ -173,7 +173,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
     //                                    посилання на ф-цію
-    window.addEventListener('scroll', shovModalByScroll);
+    //window.addEventListener('scroll', shovModalByScroll);  //поява модал коли доскролив до кінця вікна (((OFF)))
 
 
 
@@ -283,9 +283,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-
+//====================================================================================
 //--------CALC--------//
-////////////////////////
 
     const result = document.querySelector('.calculating__result span');
 
@@ -305,9 +304,7 @@ window.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('activn', 1.375);
     }
 
-    function initLocalSettings(selector, activeClass) {
-        const elements = document.querySelectorAll(selector);
-    }
+    
 
 
     function calcTotal() {//перевіряє чи заповнені поля
@@ -316,7 +313,7 @@ window.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (statt === 'ledi') {
+        if (statt === 'ledi') {//Math.round-заокруглити
             result.textContent = Math.round((447.6 + (9.2 * vaga) + (3.1 * rist) - (4.3 * age)) * activn);
         }
         else {
@@ -326,8 +323,28 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     calcTotal();
+//________________________________________________________________________________________________
+//local storage
+    function initLocalSettings(selector, activeClass) {
+        const elements = document.querySelectorAll(selector);
+
+        elements.forEach(elem => {
+            elem.classList.remove(activeClass);
+            if (elem.getAttribute('id') === localStorage.getItem('statt')) {
+                elem.classList.add(activeClass);
+            }
+            if (elem.getAttribute('data-activn') === localStorage.getItem('activn')) {
+                elem.classList.add(activeClass);
+            }
+        });
+    }
+
+    initLocalSettings('#gender div', 'calculating__choose-item_active');
+    initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
+
+//_________________________________________________________________________________________
 //Static
-    function getStaticInformation(parentSelector, acniveClass) {
+    function getStaticInformation(parentSelector, activeClass) {
         const element = document.querySelectorAll(`${parentSelector} div`);
 
         element.forEach(el => {
@@ -342,21 +359,19 @@ window.addEventListener('DOMContentLoaded', () => {
             
     
                 element.forEach(el => {
-                    el.classList.remove(acniveClass);
+                    el.classList.remove(activeClass);
                 });
     
-                e.target.classList.add(acniveClass);
+                e.target.classList.add(activeClass);
                 calcTotal();
     
             });
         });
 
-        
     }
-
     getStaticInformation('#gender', 'calculating__choose-item_active');
     getStaticInformation('.calculating__choose_big', 'calculating__choose-item_active');
-
+//_________________________________________________________________________________________
 //Dinamic
     function getDinamicInformation(selector) {
         const input = document.querySelector(selector);
@@ -397,60 +412,80 @@ window.addEventListener('DOMContentLoaded', () => {
 //------ slider -------//
 /////////////////////////
 
+    let offset = 0;
+    let slideIndex = 1;
+
     const slides = document.querySelectorAll('.offer__slide'),
         prev = document.querySelector('.offer__slider-prev'),
         next = document.querySelector('.offer__slider-next'),
-        total = document.querySelector('#total'), //всього
-        current = document.querySelector('#current');//поточний
-    let slideIndex = 1; 
-
-    showSlides(slideIndex);
+        total = document.querySelector('#total'),
+        current = document.querySelector('#current'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        width = window.getComputedStyle(slidesWrapper).width,
+        slidesField = document.querySelector('.offer__slider-inner');
 
     if (slides.length < 10) {
         total.textContent = `0${slides.length}`;
+        current.textContent =  `0${slideIndex}`;
     } else {
         total.textContent = slides.length;
+        current.textContent =  slideIndex;
     }
 
+    slidesField.style.width = 100 * slides.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
 
-    
-    
-    function showSlides(index) {
-        //перевірка крайнього положення 
-        if (index > slides.length) {//якшо індекс позиції більший ніж  загальна к-сть слайдів 
-            slideIndex = 1;         //вернутись до першого ілайду  
-        }
+    slidesWrapper.style.overflow = 'hidden';
 
-        if (index < 1) { //якшо індекс менше за 1 (0)
-            slideIndex = slides.length; //повернутись до останнього слайду в кінець
-            
-        }
-
-        slides.forEach(itemt => {
-            itemt.style.display = 'none';
-        });
-        slides[slideIndex - 1].style.display = 'block';
-
-        if (slides.length < 10) {
-            current.textContent = `0${slideIndex}`;
-        } else {
-            current.textContent = slideIndex;
-        }
-    
-    }
-
-
-    
-    function plusSlider(n) {
-        showSlides(slideIndex += n);
-    } 
-
-    prev.addEventListener('click', () => {
-        plusSlider(-1);
+    slides.forEach(slide => {
+        slide.style.width = width;
     });
 
     next.addEventListener('click', () => {
-        plusSlider(1);
+        if (offset == (+width.slice(0, width.length - 2) * (slides.length - 1))) {
+            offset = 0;
+        } else {
+            offset += +width.slice(0, width.length - 2); 
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == slides.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+
+        if (slides.length < 10) {
+            current.textContent =  `0${slideIndex}`;
+        } else {
+            current.textContent =  slideIndex;
+        }
+    });
+
+    prev.addEventListener('click', () => {
+        if (offset == 0) {
+            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+            console.log('if');
+        } else {
+            offset -= +width.slice(0, width.length - 2);
+            console.log('else');
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+
+        if (slides.length < 10) {
+            current.textContent =  `0${slideIndex}`;
+        } else {
+            current.textContent =  slideIndex;
+        }
     });
 
     
